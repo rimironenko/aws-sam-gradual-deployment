@@ -46,6 +46,7 @@ Resources:
       Environment:
         Variables:
           NewVersion: !Ref RequestHandlerFunction.Version
+          LifecycleStatus: Succeeded
 
   # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
   # for more info to see how to tune the lambda function configs based on your use case.
