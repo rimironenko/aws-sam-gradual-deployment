@@ -6,12 +6,15 @@ import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.codedeploy.CodeDeployClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * The module containing all dependencies required by the {@link ApiGatewayRequestHandler} and {@link PreTrafficHookHandler}.
  */
 public class DependencyFactory {
+
+    private static final String ENV_VARIABLE_TABLE = "TABLE";
 
     private DependencyFactory() {}
 
@@ -25,6 +28,18 @@ public class DependencyFactory {
                         .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
                         .httpClientBuilder(UrlConnectionHttpClient.builder())
                         .build())
+                .build();
+    }
+
+    public static String tableName() {
+        return System.getenv(ENV_VARIABLE_TABLE);
+    }
+
+    public static CodeDeployClient codeDeployClient() {
+        return CodeDeployClient.builder()
+                .credentialsProvider(EnvironmentVariableCredentialsProvider.create())
+                .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
+                .httpClientBuilder(UrlConnectionHttpClient.builder())
                 .build();
     }
 }

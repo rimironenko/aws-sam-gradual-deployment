@@ -2,13 +2,58 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+
+  GradualDeploymentTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      Tags:
+        project: aws-sam-dradual-deployment
+      SSESpecification:
+        SSEEnabled: true
+
+  GradualDeploymentApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+
+  PreTrafficHookHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./target/aws-sam-gradual-deployment.jar
+      Handler: com.home.amazon.serverless.PreTrafficHookHandler::handleRequest
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "codedeploy:PutLifecycleEventHookExecutionStatus"
+              Resource:
+                !Sub 'arn:aws:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*'
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "lambda:InvokeFunction"
+              Resource: !Ref RequestHandlerFunction.Version
+      Runtime: java8
+      DeploymentPreference:
+        Enabled: false
+      Timeout: 60
+      MemorySize: 512
+      Environment:
+        Variables:
+          NewVersion: !Ref RequestHandlerFunction.Version
+
   # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
   # for more info to see how to tune the lambda function configs based on your use case.
-  AppFunction:
+  RequestHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: java8
-      Handler: com.home.amazon.serverless.App::handleRequest
+      Handler: com.home.amazon.serverless.ApiGatewayRequestHandler::handleRequest
       Timeout: 60
       MemorySize: 512
       CodeUri: ./target/aws-sam-gradual-deployment.jar
@@ -18,3 +63,21 @@ Resources:
       #Policies:
       # - S3ReadPolicy:
       #     BucketName: test-bucket
+      Environment:
+        Variables:
+          TABLE: !Ref GradualDeploymentTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref GradualDeploymentTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /items/{id}
+            Method: get
+            RestApiId:
+              Ref: GradualDeploymentApi
+      DeploymentPreference:
+        Type: Linear10PercentEvery1Minute
+        Hooks:
+          PreTraffic: !Ref PreTrafficHookHandler
