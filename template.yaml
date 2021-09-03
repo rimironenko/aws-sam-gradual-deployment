@@ -81,3 +81,4 @@ Resources:
         Type: Linear10PercentEvery1Minute
         Hooks:
           PreTraffic: !Ref PreTrafficHookHandler
+      AutoPublishAlias: dev
