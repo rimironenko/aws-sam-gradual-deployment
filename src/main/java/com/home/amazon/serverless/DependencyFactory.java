@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class DependencyFactory {
 
     private static final String ENV_VARIABLE_TABLE = "TABLE";
+    private static final String LIFECYCLE_STATUS_ENV_NAME = "LifecycleStatus";
 
     private DependencyFactory() {}
 
@@ -41,5 +42,9 @@ public class DependencyFactory {
                 .region(Region.of(System.getenv(SdkSystemSetting.AWS_REGION.environmentVariable())))
                 .httpClientBuilder(UrlConnectionHttpClient.builder())
                 .build();
+    }
+
+    public static String lifeCycleStatus() {
+        return System.getenv(LIFECYCLE_STATUS_ENV_NAME);
     }
 }

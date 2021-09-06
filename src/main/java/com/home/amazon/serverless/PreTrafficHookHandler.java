@@ -16,7 +16,6 @@ public class PreTrafficHookHandler implements RequestHandler<Map<String, String>
     static final String DEPLOYMENT_ID_PARAM = "DeploymentId";
     static final String HOOK_EXECUTION_ID_PARAM = "LifecycleEventHookExecutionId";
     private static final String NEW_VERSION_ENV_NAME = "NewVersion";
-    private static final String LIFECYCLE_STATUS_ENV_NAME = "LifecycleStatus";
 
     private final CodeDeployClient codeDeployClient;
 
@@ -39,7 +38,7 @@ public class PreTrafficHookHandler implements RequestHandler<Map<String, String>
         /* Lifecycle execution status for the demo ij just taken from the Environment variable.
            It can be any operation to ensure that the traffic shifting can be started.
         */
-        LifecycleEventStatus lifecycleEventStatus = LifecycleEventStatus.fromValue(System.getenv(LIFECYCLE_STATUS_ENV_NAME));
+        LifecycleEventStatus lifecycleEventStatus = LifecycleEventStatus.fromValue(DependencyFactory.lifeCycleStatus());
         PutLifecycleEventHookExecutionStatusRequest newRequest = PutLifecycleEventHookExecutionStatusRequest.builder()
                 .deploymentId(deploymentId)
                 .lifecycleEventHookExecutionId(lifecycleEventHookExecutionId)

@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class ApiGatewayRequestHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
+    static final Integer STATUS_CODE_SUCCESS = 200;
+
     private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private final String dynamoDbTableName;
     private final TableSchema<DataModel> dynamoDbTableSchema;
@@ -29,14 +31,16 @@ public class ApiGatewayRequestHandler implements RequestHandler<APIGatewayProxyR
         Map<String, String> pathParameters = input.getPathParameters();
         String response = "";
         if (pathParameters != null) {
-            String itemPartitionKey = pathParameters.get("id");
-            DynamoDbTable<DataModel> dynamoDbTable = dynamoDbEnhancedClient.table(dynamoDbTableName, dynamoDbTableSchema);
-            DataModel item = dynamoDbTable.getItem(Key.builder().partitionValue(itemPartitionKey).build());
-            if (item != null) {
-                response = item.toString();
+            String itemPartitionKey = pathParameters.get(DataModel.PARTITION_KEY);
+            if (itemPartitionKey != null && !itemPartitionKey.isEmpty()) {
+                DynamoDbTable<DataModel> dynamoDbTable = dynamoDbEnhancedClient.table(dynamoDbTableName, dynamoDbTableSchema);
+                DataModel item = dynamoDbTable.getItem(Key.builder().partitionValue(itemPartitionKey).build());
+                if (item != null) {
+                    response = item.toString();
+                }
             }
         }
-        return new APIGatewayProxyResponseEvent().withStatusCode(200)
+        return new APIGatewayProxyResponseEvent().withStatusCode(STATUS_CODE_SUCCESS)
                 .withIsBase64Encoded(Boolean.FALSE)
                 .withHeaders(Collections.emptyMap())
                 .withBody(response);

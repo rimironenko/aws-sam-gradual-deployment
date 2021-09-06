@@ -6,6 +6,8 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 @DynamoDbBean
 public class DataModel {
 
+    public static final String PARTITION_KEY = "id";
+
     private static final String JSON_TEMPLATE = "{\"id\":\"%s\"}";
 
     private String id;
