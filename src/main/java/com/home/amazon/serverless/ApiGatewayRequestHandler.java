@@ -33,8 +33,8 @@ public class ApiGatewayRequestHandler implements RequestHandler<APIGatewayProxyR
         if (pathParameters != null) {
             String itemPartitionKey = pathParameters.get(DataModel.PARTITION_KEY);
             if (itemPartitionKey != null && !itemPartitionKey.isEmpty()) {
-                DynamoDbTable<DataModel> table = dynamoDbEnhancedClient.table(dynamoDbTableName, dynamoDbTableSchema);
-                DataModel item = table.getItem(Key.builder().partitionValue(itemPartitionKey).build());
+                DynamoDbTable<DataModel> dynamoDbTable = dynamoDbEnhancedClient.table(dynamoDbTableName, dynamoDbTableSchema);
+                DataModel item = dynamoDbTable.getItem(Key.builder().partitionValue(itemPartitionKey).build());
                 if (item != null) {
                     response = item.toString();
                 }
