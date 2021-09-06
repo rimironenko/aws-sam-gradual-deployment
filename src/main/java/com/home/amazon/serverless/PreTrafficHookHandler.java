@@ -26,7 +26,6 @@ public class PreTrafficHookHandler implements RequestHandler<Map<String, String>
     @Override
     public PutLifecycleEventHookExecutionStatusResponse handleRequest(Map<String, String> input, Context context) {
         LambdaLogger logger = context.getLogger();
-        logger.log("Testing the GitHub Actions pipeline");
 
         //The IDs below are initialized by a CodeDeploy execution
         final String deploymentId = input.get(DEPLOYMENT_ID_PARAM);
