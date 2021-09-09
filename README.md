@@ -1,6 +1,9 @@
 # App
 
-This project contains an AWS Lambda maven application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
+This project contains an AWS SAM application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
+The application uses AWS SAM capability for a gradual deployment of Lambda functions and AWS SAM pipeline triggered by GitHub actions.
+The infrastructure is present on the picture given below.
+![image](https://miro.medium.com/max/1400/1*mNjTQlNiQBBYbyO-xmQDNg.png)
 
 ## Prerequisites
 - Java 1.8+
@@ -15,17 +18,13 @@ add the code to interact with the SDK client based on your use case.
 
 #### Building the project
 ```
-mvn clean install
+sam build
 ```
 
 #### Testing it locally
 ```
 sam local invoke
 ```
-
-#### Adding more SDK clients
-To add more service clients, you need to add the specific services modules in `pom.xml` and create the clients in `DependencyFactory` following the same 
-pattern as dynamoDbClient.
 
 ## Deployment
 
@@ -41,5 +40,7 @@ sam deploy --guided
 
 See [Deploying Serverless Applications](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-deploying.html) for more info.
 
+## Traffic shifting after a deployment
+[PreTrafficHookHandler Lambda function](src/main/java/com/home/amazon/serverless/PreTrafficHookHandler.java) validates the inftasrtucture before starting the traffic shifting. It takes the lifecycle status from the environemnt configuration, but can execute any custom business logic to decide if the traffic shifting can be started for a new Lambda version.
 
-
+[SAM template](template.yml) contains "DeploymentPreference" property for [API Gateway Lambda handler](src/main/java/com/home/amazon/serverless/ApiGatewayRequestHandler.java) that starts the traffic shifting as configured if the PreTrafficHookHandler reports success.
