@@ -5,6 +5,8 @@ The application uses AWS SAM capability for a gradual deployment of Lambda funct
 The infrastructure is present on the picture given below.
 ![image](https://miro.medium.com/max/1400/1*mNjTQlNiQBBYbyO-xmQDNg.png)
 
+Please read more about this in my [Medium blog post](https://medium.com/@rostyslav.myronenko/gradual-deployment-of-aws-sam-java-application-6b932c781eae).
+
 ## Prerequisites
 - Java 1.8+
 - Apache Maven
