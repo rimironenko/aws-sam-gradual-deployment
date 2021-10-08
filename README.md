@@ -3,7 +3,7 @@
 This project contains an AWS SAM application with [AWS Java SDK 2.x](https://github.com/aws/aws-sdk-java-v2) dependencies.
 The application uses AWS SAM capability for a gradual deployment of Lambda functions and AWS SAM pipeline triggered by GitHub actions.
 The infrastructure is present on the picture given below.
-![image](https://miro.medium.com/max/1400/1*mNjTQlNiQBBYbyO-xmQDNg.png)
+![Architecture diagram](assets/Architecture.png)
 
 Please read more about this in my [Medium blog post](https://medium.com/@rostyslav.myronenko/gradual-deployment-of-aws-sam-java-application-6b932c781eae).
 
