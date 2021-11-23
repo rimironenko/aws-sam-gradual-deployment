@@ -38,7 +38,7 @@ Resources:
               Action:
                 - "lambda:InvokeFunction"
               Resource: !Ref RequestHandlerFunction.Version
-      Runtime: java8
+      Runtime: java8.al2
       DeploymentPreference:
         Enabled: false
       Timeout: 60
@@ -53,7 +53,7 @@ Resources:
   RequestHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: java8
+      Runtime: java8.al2
       Handler: com.home.amazon.serverless.ApiGatewayRequestHandler::handleRequest
       Timeout: 60
       MemorySize: 512
